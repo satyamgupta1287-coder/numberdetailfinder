@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Trace Result</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  background:#000;
+  color:#00ffcc;
+  font-family:monospace;
+  text-align:center;
+  padding:20px;
+}
+
+h1{
+  text-shadow:0 0 20px #00ffcc;
+}
+
+#terminal{
+  margin-top:20px;
+  text-align:left;
+  max-width:420px;
+  margin:auto;
+  border:1px solid #00ffcc;
+  padding:15px;
+  height:280px;
+  overflow-y:auto;
+  box-shadow:0 0 25px #00ffcc;
+}
+
+#mapBox{
+  margin-top:15px;
+  max-width:420px;
+  margin:auto;
+}
+
+.footer{
+  margin-top:20px;
+  font-size:12px;
+  opacity:0.7;
+}
+</style>
+</head>
+
+<body>
+
+<h1>⚡ TRACE RESULT ⚡</h1>
+
+<div id="terminal">> Loading...</div>
+
+<div id="mapBox"></div>
+
+<div class="footer">
+This is for educational purpose only. Not to harm anyone.<br>
+Developed by Satyam Gupta ⚡
+</div>
+
+<!-- 🔊 CUSTOM AUDIO -->
+<audio id="successAudio" src="success.mp3"></audio>
+
+<script>
+
+// TYPE EFFECT
+async function type(text){
+  const term=document.getElementById("terminal");
+
+  let color="#00ffcc";
+  if(text.includes("Name")||text.includes("Number")) color="#00ff00";
+  if(text.includes("ID")) color="red";
+
+  term.innerHTML+=`<span style="color:${color}">${text}</span><br>`;
+  term.scrollTop=term.scrollHeight;
+
+  await new Promise(r=>setTimeout(r,80));
+}
+
+// PLAY FINAL SOUND
+function playFinalSound(){
+  let audio=document.getElementById("successAudio");
+  audio.currentTime=0;
+  audio.play().catch(()=>{});
+}
+
+// MAP FUNCTION
+function showMap(address){
+  if(!address) return;
+
+  let enc=encodeURIComponent(address);
+
+  document.getElementById("mapBox").innerHTML=`
+    <iframe width="100%" height="220"
+    style="border-radius:10px;border:none;"
+    src="https://maps.google.com/maps?q=${enc}&z=14&output=embed">
+    </iframe>`;
+}
+
+// GET NUMBER
+const params=new URLSearchParams(window.location.search);
+const num=params.get("num");
+
+// MAIN FUNCTION
+async function start(){
+
+  await type("> Initializing...");
+  await type("> Processing number: "+num);
+  await type("> Connecting to secure server...");
+  await new Promise(r=>setTimeout(r,800));
+
+  try{
+    // 🔥 VERCEL API ROUTE
+    let res = await fetch("/api/getData?number=" + num);
+    let data = await res.json();
+
+    let results=data?.data?.result?.results;
+
+    if(!results || results.length===0){
+      await type("> No data found ❌");
+      return;
+    }
+
+    await type("> Data Retrieved Successfully\n");
+
+    // MULTIPLE RESULTS
+    for(let i=0;i<results.length && i<3;i++){
+      let r=results[i];
+
+      await type("📱 Number: "+(r.mobile||"N/A"));
+      await new Promise(r=>setTimeout(r,200));
+
+      await type("🆔 ID: "+(r.id||"N/A"));
+      await new Promise(r=>setTimeout(r,250));
+
+      await type("👤 Name: "+(r.name||"N/A"));
+      await new Promise(r=>setTimeout(r,300));
+
+      await type("📡 Provider: "+(r.circle||"N/A"));
+      await new Promise(r=>setTimeout(r,250));
+
+      await type("📍 Address: "+(r.address||"N/A"));
+      await new Promise(r=>setTimeout(r,400));
+
+      await type("📧 Email: "+(r.email||"N/A"));
+      await new Promise(r=>setTimeout(r,200));
+
+      await type("🔁 Alt: "+(r.alt||"N/A"));
+      await new Promise(r=>setTimeout(r,300));
+
+      await type("----------------------");
+
+      // MAP FIRST RESULT
+      if(i===0){
+        await type("> Locating address...");
+        await new Promise(r=>setTimeout(r,800));
+        showMap(r.address);
+      }
+    }
+
+    // 🔊 FINAL SOUND
+    await new Promise(r=>setTimeout(r,700));
+    playFinalSound();
+
+  }catch(e){
+    console.log(e);
+    await type("> Error fetching data ❌");
+  }
+}
+
+start();
+
+</script>
+
+</body>
+</html>

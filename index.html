@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cyber Trace X</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;
+  background:radial-gradient(circle at center, #000000, #001100);
+  color:#00ffcc;
+  font-family:monospace;
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+
+.top-brand{
+  position:absolute;
+  top:15px;
+  font-size:12px;
+  opacity:0.7;
+}
+
+h1{
+  font-size:28px;
+  text-shadow:0 0 20px #00ffcc;
+}
+
+input{
+  padding:12px;
+  width:80%;
+  max-width:320px;
+  margin-top:20px;
+  background:#001100;
+  border:1px solid #00ffcc;
+  color:#00ffcc;
+  border-radius:8px;
+}
+
+button{
+  margin-top:15px;
+  padding:12px 25px;
+  background:#00ffcc;
+  color:black;
+  border:none;
+  border-radius:8px;
+  font-weight:bold;
+  cursor:pointer;
+}
+
+.footer{
+  position:absolute;
+  bottom:15px;
+  font-size:12px;
+  opacity:0.7;
+}
+</style>
+</head>
+
+<body>
+
+
+
+<h1>⚡ CYBER TRACE X ⚡</h1>
+
+<input id="number" placeholder="Enter Target Number">
+
+<button onclick="go()">START TRACE</button>
+
+<div class="footer">
+This is for educational purpose only. Not to harm anyone.<br>
+Developed by Satyam Gupta ⚡
+</div>
+
+<script>
+
+// 🔊 SOUND SYSTEM (TOP ME ADD KIYA HAI)
+let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+function playSound(freq, duration){
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+
+  osc.frequency.value = freq;
+  gain.gain.value = 0.1;
+
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+function clickSound(){
+  playSound(800, 0.1);
+}
+
+function errorSound(){
+  playSound(300, 0.2);
+}
+
+// 🔥 MAIN FUNCTION
+function go(){
+  let num = document.getElementById("number").value;
+
+  if(!num){
+    errorSound(); // ❌ error sound
+    alert("Please enter a number");
+    return;
+  }
+
+  clickSound(); // 🔊 click sound
+
+  setTimeout(()=>{
+    window.location.href = "loading.html?num=" + num;
+  },200);
+}
+
+</script>
+
+</body>
+</html>
