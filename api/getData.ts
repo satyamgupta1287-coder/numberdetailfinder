@@ -1,21 +1,22 @@
-export default async function handler(request) {
-  const { searchParams } = new URL(request.url);
-  const number = searchParams.get("number");
-
-  const url = `https://cyber-testing-api.vercel.app/num2info?key=CYBER_TEST&number=${number}`;
-
+export default async function handler(req, res) {
   try {
-    const res = await fetch(url);
-    const data = await res.json();
+    const { number } = req.query;
 
-    return new Response(JSON.stringify(data), {
-      status: 200,
-      headers: { "Content-Type": "application/json" }
-    });
+    if (!number) {
+      return res.status(400).json({ error: "Number missing" });
+    }
 
-  } catch (err) {
-    return new Response(JSON.stringify({ error: "API failed" }), {
-      status: 500
+    const apiUrl = `https://cyber-testing-api.vercel.app/num2info?key=CYBER_TEST&number=${number}`;
+
+    const response = await fetch(apiUrl);
+    const data = await response.json();
+
+    return res.status(200).json(data);
+
+  } catch (error) {
+    return res.status(500).json({
+      error: "Server error",
+      details: error.message
     });
   }
 }
