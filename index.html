@@ -3,68 +3,510 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Number Detail Finder</title>
+    <title>CYBER TRACE X - Elite Number Lookup</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background-color: #282c34;
-            color: #ffffff;
-            text-align: center;
-        }
-        h1 {
-            font-size: 2.5em;
-            margin-top: 50px;
-        }
-        .container {
+            background: #0a0e27;
+            color: #00ffcc;
+            font-family: 'Orbitron', 'Space Mono', monospace;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            flex-direction: column;
-            padding: 20px;
-            animation: fadeIn 1s;
+            overflow: hidden;
+            position: relative;
         }
-        input[type='text'] {
-            padding: 10px;
-            margin: 20px;
-            border: 2px solid #61dafb;
-            border-radius: 5px;
-            outline: none;
-            transition: border-color 0.3s;
+
+        /* Animated Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 255, 204, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 0, 150, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(0, 100, 255, 0.1) 0%, transparent 50%);
+            animation: gradient-shift 15s ease infinite;
+            z-index: -2;
         }
-        input[type='text']:focus {
-            border-color: #21a1f1;
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2300ffcc' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: -1;
         }
-        button {
-            padding: 10px 20px;
-            background-color: #61dafb;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            color: #282c34;
-            font-size: 1em;
-            transition: background-color 0.3s;
+
+        @keyframes gradient-shift {
+            0%, 100% { background-position: 0% 0%; }
+            50% { background-position: 100% 100%; }
         }
-        button:hover {
-            background-color: #21a1f1;
+
+        /* Floating Particles */
+        .particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+            top: 0;
+            left: 0;
         }
-        @keyframes fadeIn {
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #00ffcc;
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: particle-float 20s infinite;
+            box-shadow: 0 0 10px #00ffcc;
+        }
+
+        @keyframes particle-float {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            padding: 50px;
+            max-width: 600px;
+            width: 90%;
+            backdrop-filter: blur(20px);
+            background: rgba(10, 14, 39, 0.8);
+            border: 2px solid rgba(0, 255, 204, 0.3);
+            border-radius: 20px;
+            box-shadow: 
+                0 0 40px rgba(0, 255, 204, 0.3),
+                0 0 80px rgba(255, 0, 150, 0.2),
+                inset 0 0 40px rgba(0, 255, 204, 0.1);
+            animation: container-glow 3s ease-in-out infinite, slide-up 0.8s ease-out;
+        }
+
+        @keyframes container-glow {
+            0%, 100% {
+                box-shadow: 
+                    0 0 40px rgba(0, 255, 204, 0.3),
+                    0 0 80px rgba(255, 0, 150, 0.2),
+                    inset 0 0 40px rgba(0, 255, 204, 0.1);
+            }
+            50% {
+                box-shadow: 
+                    0 0 60px rgba(0, 255, 204, 0.5),
+                    0 0 120px rgba(255, 0, 150, 0.3),
+                    inset 0 0 60px rgba(0, 255, 204, 0.15);
+            }
+        }
+
+        @keyframes slide-up {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Brand Text */
+        .brand {
+            font-size: 12px;
+            letter-spacing: 4px;
+            color: #00ffcc;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            font-weight: 700;
+            text-shadow: 0 0 20px rgba(0, 255, 204, 0.8);
+            animation: text-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes text-glow {
+            0%, 100% {
+                text-shadow: 0 0 20px rgba(0, 255, 204, 0.8);
+            }
+            50% {
+                text-shadow: 0 0 40px rgba(0, 255, 204, 1), 0 0 60px rgba(0, 255, 204, 0.6);
+            }
+        }
+
+        /* Main Heading */
+        h1 {
+            font-size: 48px;
+            font-weight: 900;
+            background: linear-gradient(45deg, #00ffcc, #ff0090, #00ffcc);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 15px 0;
+            animation: gradient-flow 6s ease infinite, float 3s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(0, 255, 204, 0.5);
+            letter-spacing: 2px;
+        }
+
+        @keyframes gradient-flow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Subtitle */
+        .subtitle {
+            font-size: 14px;
+            color: #00ffcc;
+            margin: 20px 0 30px 0;
+            font-weight: 400;
+            letter-spacing: 1px;
+            opacity: 0.8;
+            animation: fade-in 1s ease-out 0.3s both;
+        }
+
+        @keyframes fade-in {
             from { opacity: 0; }
-            to { opacity: 1; }
+            to { opacity: 0.8; }
+        }
+
+        /* Input Group */
+        .input-group {
+            position: relative;
+            margin-bottom: 30px;
+            animation: fade-in 1s ease-out 0.4s both;
+        }
+
+        input {
+            width: 100%;
+            padding: 18px 20px;
+            background: rgba(0, 255, 204, 0.05);
+            border: 2px solid rgba(0, 255, 204, 0.3);
+            color: #00ffcc;
+            border-radius: 12px;
+            font-family: 'Space Mono', monospace;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+
+        input::placeholder {
+            color: rgba(0, 255, 204, 0.4);
+        }
+
+        input:focus {
+            outline: none;
+            background: rgba(0, 255, 204, 0.1);
+            border-color: #00ffcc;
+            box-shadow: 
+                0 0 20px rgba(0, 255, 204, 0.5),
+                inset 0 0 20px rgba(0, 255, 204, 0.1);
+        }
+
+        /* Button Styling */
+        button {
+            width: 100%;
+            padding: 18px 30px;
+            background: linear-gradient(135deg, #00ffcc, #00ddaa);
+            color: #0a0e27;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: fade-in 1s ease-out 0.5s both;
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.4);
+        }
+
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.5s ease;
+            z-index: 1;
+        }
+
+        button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 2;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 
+                0 10px 40px rgba(0, 255, 204, 0.6),
+                0 0 60px rgba(0, 255, 204, 0.4);
+            background: linear-gradient(135deg, #00ffdd, #00ffcc);
+        }
+
+        button:hover::before {
+            left: 100%;
+        }
+
+        button:hover::after {
+            opacity: 1;
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        /* Features Section */
+        .features {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(0, 255, 204, 0.2);
+            animation: fade-in 1s ease-out 0.6s both;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 15px 0;
+            font-size: 13px;
+            color: rgba(0, 255, 204, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateX(10px);
+            color: #00ffcc;
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.8);
+        }
+
+        .feature-icon {
+            color: #00ffcc;
+            font-weight: 700;
+            min-width: 20px;
+            font-size: 18px;
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.8);
+        }
+
+        /* Footer */
+        .footer {
+            position: fixed;
+            bottom: 20px;
+            font-size: 11px;
+            color: rgba(0, 255, 204, 0.5);
+            letter-spacing: 1px;
+            animation: fade-in 1s ease-out 0.7s both;
+            z-index: 10;
+        }
+
+        .footer a {
+            color: #00ffcc;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer a:hover {
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.8);
+            color: #ff0090;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 25px;
+                max-width: 90%;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            button {
+                padding: 16px 25px;
+                font-size: 14px;
+            }
+
+            input {
+                padding: 15px 18px;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .brand {
+                font-size: 10px;
+                letter-spacing: 2px;
+            }
+
+            .subtitle {
+                font-size: 12px;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="particles" id="particles"></div>
+
     <div class="container">
-        <h1>Find Detailed Information About a Number</h1>
-        <input type="text" placeholder="Enter a number..." id="numberInput" />
-        <button id="findButton">Find Details</button>
+        <div class="brand">⚡ CYBER TRACE X ⚡</div>
+        <h1>NUMBER TRACE</h1>
+        <p class="subtitle">Elite Phone Number Lookup System</p>
+
+        <div class="input-group">
+            <input type="tel" id="number" placeholder="Enter phone number (10-15 digits)..." maxlength="15">
+        </div>
+
+        <button onclick="go()">► INITIATE TRACE ◄</button>
+
+        <div class="features">
+            <div class="feature-item">
+                <span class="feature-icon">◆</span>
+                <span>Instant Real-Time Results</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">◆</span>
+                <span>Bank-Grade Encryption</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">◆</span>
+                <span>Advanced Tracking System</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">◆</span>
+                <span>Zero Logs • 100% Private</span>
+            </div>
+        </div>
     </div>
+
+    <div class="footer">
+        📍 EDUCATIONAL PURPOSE ONLY | Made by <a href="https://github.com/satyamgupta1287-coder">Satyam Gupta</a>
+    </div>
+
     <script>
-        document.getElementById('findButton').addEventListener('click', function() {
-            const number = document.getElementById('numberInput').value;
-            alert('Finding details for: ' + number);
-            // Add actual functionality here
+        // Particle Generation
+        function createParticles() {
+            const particleContainer = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particleContainer.appendChild(particle);
+            }
+        }
+
+        // Audio Context for Sound Effects
+        let audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(freq, duration, type = 'sine') {
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = type;
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start(audioCtx.currentTime);
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        function successSound() {
+            playSound(800, 0.1);
+            playSound(1000, 0.1);
+        }
+
+        function errorSound() {
+            playSound(300, 0.15);
+            playSound(200, 0.15);
+        }
+
+        function go() {
+            let num = document.getElementById("number").value.trim();
+
+            if (!num || num.length < 10) {
+                errorSound();
+                alert("❌ Invalid Input: Please enter a valid phone number (10-15 digits)");
+                return;
+            }
+
+            successSound();
+            const button = document.querySelector("button");
+            button.style.opacity = "0.6";
+            button.textContent = "⟳ TRACING...";
+
+            setTimeout(() => {
+                window.location.href = "loading.html?num=" + encodeURIComponent(num);
+            }, 300);
+        }
+
+        // Enter Key Support
+        document.getElementById("number").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") go();
         });
+
+        // Initialize Particles on Load
+        window.addEventListener('load', createParticles);
     </script>
 </body>
 </html>
