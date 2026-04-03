@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TRACE_SYS :: RESULT OUTPUT</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --green: #00ff41;
+  --cyan: #00d4ff;
+  --pink: #ff0080;
+  --yellow: #ffea00;
+  --bg: #010a01;
+  --glow-g: 0 0 8px #00ff41, 0 0 18px rgba(0,255,65,0.4);
+  --glow-c: 0 0 8px #00d4ff, 0 0 18px rgba(0,212,255,0.3);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+/* Matrix canvas */
+#matrixCanvas {
+  position:fixed; top:0; left:0;
+  width:100%; height:100%;
+  z-index:0; opacity:0.07;
+  pointer-events:none;
+}
+
+/* Scanlines */
+body::before {
+  content:'';
+  position:fixed; top:0; left:0;
+  width:100%; height:100%;
+  background:repeating-linear-gradient(
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px
+  );
+  z-index:1; pointer-events:none;
+}
+
+/* Vignette */
+body::after {
+  content:'';
+  position:fixed; top:0; left:0;
+  width:100%; height:100%;
+  background:radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.85) 100%);
+  z-index:1; pointer-events:none;
+}
+
+body {
+  background: var(--bg);
+  color: var(--green);
+  font-family: 'Share Tech Mono', monospace;
+  min-height:100vh;
+  padding:20px;
+  overflow-x:hidden;
+}
+
+.container {
+  max-width:1100px;
+  margin:0 auto;
+  position:relative;
+  z-index:10;
+  animation: fadeUp 0.5s ease-out both;
+}
+
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(20px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── HEADER ── */
+.header {
+  text-align:center;
+  padding:30px 20px 25px;
+  position:relative;
+  margin-bottom:25px;
+}
+
+.header-line {
+  position:absolute;
+  top:0; left:0; right:0;
+  height:2px;
+  background:linear-gradient(90deg, transparent, var(--green), var(--cyan), var(--green), transparent);
+  animation:linePulse 3s ease-in-out infinite;
+}
+
+@keyframes linePulse {
+  0%,100% { opacity:0.5; }
+  50%      { opacity:1; box-shadow: 0 0 15px var(--green); }
+}
+
+.sys-tag {
+  font-size:10px;
+  letter-spacing:4px;
+  color:#3a6b3a;
+  margin-bottom:10px;
+}
+
+h1 {
+  font-family:'Orbitron', monospace;
+  font-size:clamp(24px, 5vw, 50px);
+  font-weight:900;
+  letter-spacing:6px;
+  color:var(--green);
+  text-shadow: var(--glow-g);
+  animation: glitch 6s infinite;
+}
+
+@keyframes glitch {
+  0%,88%,100% { text-shadow:var(--glow-g); transform:none; }
+  89% { text-shadow:-2px 0 var(--pink), 2px 0 var(--cyan); transform:translate(-1px); }
+  90% { text-shadow: 2px 0 var(--pink),-2px 0 var(--cyan); transform:translate(1px); }
+  91% { text-shadow:var(--glow-g); transform:none; }
+  94% { text-shadow:-3px 0 var(--cyan); transform:translate(2px,-1px); }
+  95% { text-shadow:var(--glow-g); transform:none; }
+}
+
+.badges {
+  display:flex;
+  gap:14px;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-top:16px;
+}
+
+.badge {
+  font-size:10px;
+  font-family:'Orbitron', monospace;
+  letter-spacing:2px;
+  padding:5px 14px;
+  border:1px solid;
+  text-transform:uppercase;
+}
+
+.badge-g { color:var(--green); border-color:var(--green); box-shadow:var(--glow-g); animation:badgePulse 2s infinite; }
+.badge-c { color:var(--cyan);  border-color:var(--cyan);  box-shadow:var(--glow-c); }
+
+@keyframes badgePulse {
+  0%,100% { box-shadow:var(--glow-g); }
+  50%     { box-shadow:0 0 20px var(--green), 0 0 40px rgba(0,255,65,0.5); }
+}
+
+.dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--green); box-shadow:var(--glow-g); animation:blink 1s step-end infinite; margin-right:5px; vertical-align:middle; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── STAT ROW ── */
+.stat-row {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:20px;
+}
+
+.stat-box {
+  background:rgba(0,255,65,0.03);
+  border:1px solid rgba(0,255,65,0.2);
+  padding:14px;
+  text-align:center;
+  transition:border-color 0.3s;
+  position:relative;
+  overflow:hidden;
+}
+
+.stat-box::after {
+  content:'';
+  position:absolute;
+  bottom:0; left:0;
+  width:100%; height:2px;
+  background:linear-gradient(90deg, transparent, var(--green), transparent);
+  transform:scaleX(0);
+  transition:transform 0.4s;
+}
+.stat-box:hover { border-color:var(--green); }
+.stat-box:hover::after { transform:scaleX(1); }
+
+.stat-num {
+  font-family:'Orbitron', monospace;
+  font-size:22px; font-weight:900;
+  display:block; line-height:1;
+  margin-bottom:4px;
+}
+
+.stat-lbl { font-size:9px; letter-spacing:2px; color:#3a6b3a; text-transform:uppercase; }
+
+/* ── GRID ── */
+.grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin-bottom:18px;
+}
+
+/* ── PANEL ── */
+.panel {
+  background:rgba(0,255,65,0.03);
+  border:1px solid rgba(0,255,65,0.22);
+  position:relative;
+  overflow:hidden;
+  animation:fadeUp 0.5s ease-out both;
+}
+
+/* scanning beam */
+.panel::before {
+  content:'';
+  position:absolute;
+  top:0; left:-100%; width:50%; height:1px;
+  background:linear-gradient(90deg, transparent, var(--green), transparent);
+  animation:beam 4s linear infinite;
+}
+.panel:nth-child(2)::before { animation-delay:2s; }
+
+@keyframes beam { 0%{left:-100%} 100%{left:200%} }
+
+/* corner brackets */
+.panel::after {
+  content:'';
+  position:absolute;
+  top:0; left:0;
+  width:18px; height:18px;
+  border-top:2px solid var(--green);
+  border-left:2px solid var(--green);
+  box-shadow:var(--glow-g);
+}
+
+.corner-br {
+  position:absolute; bottom:0; right:0;
+  width:18px; height:18px;
+  border-bottom:2px solid var(--green);
+  border-right:2px solid var(--green);
+  box-shadow:var(--glow-g);
+}
+
+.panel-head {
+  display:flex; align-items:center; gap:8px;
+  padding:11px 16px;
+  border-bottom:1px solid rgba(0,255,65,0.15);
+  background:rgba(0,255,65,0.04);
+}
+
+.panel-title {
+  font-family:'Orbitron', monospace;
+  font-size:10px; font-weight:700;
+  color:var(--green); letter-spacing:3px;
+  text-shadow:var(--glow-g);
+}
+
+.dots { display:flex; gap:5px; margin-left:auto; }
+.dots span { width:6px; height:6px; border-radius:50%; background:var(--green); opacity:0.35; }
+.dots span:first-child { opacity:0.9; animation:blink 1.5s infinite; }
+.dots span:nth-child(2){ animation:blink 1.5s 0.5s infinite; }
+
+.panel-body { padding:16px; }
+
+/* ── PROGRESS ── */
+.prog-lbl { font-size:10px; color:#3a6b3a; letter-spacing:1px; margin-bottom:6px; }
+.prog-bar { height:2px; background:rgba(0,255,65,0.1); margin-bottom:14px; overflow:visible; position:relative; }
+.prog-fill {
+  height:100%;
+  background:linear-gradient(90deg, var(--cyan), var(--green));
+  box-shadow:0 0 8px var(--green);
+  width:0%;
+  transition:width 1.8s ease-out;
+  position:relative;
+}
+.prog-fill::after {
+  content:'';
+  position:absolute; right:0; top:-3px;
+  width:8px; height:8px; border-radius:50%;
+  background:var(--green);
+  box-shadow:var(--glow-g);
+}
+
+/* ── TERMINAL ── */
+#terminal {
+  font-size:12.5px; line-height:2;
+  color:var(--green);
+  max-height:350px; overflow-y:auto;
+  min-height:180px;
+}
+
+#terminal::-webkit-scrollbar { width:3px; }
+#terminal::-webkit-scrollbar-thumb { background:var(--green); border-radius:2px; }
+
+.t-line {
+  display:flex; gap:8px;
+  border-bottom:1px solid rgba(0,255,65,0.05);
+  padding:1px 0;
+  animation:lineIn 0.25s ease-out both;
+}
+
+@keyframes lineIn {
+  from { opacity:0; transform:translateX(-6px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+
+.t-prompt { color:var(--cyan); text-shadow:var(--glow-c); flex-shrink:0; }
+.c-green  { color:var(--green); }
+.c-cyan   { color:var(--cyan); }
+.c-pink   { color:var(--pink); }
+.c-yellow { color:var(--yellow); }
+
+/* ── DATA FIELDS ── */
+.data-field {
+  margin-bottom:11px;
+  padding:11px 13px;
+  background:rgba(0,255,65,0.03);
+  border-left:2px solid var(--green);
+  border-bottom:1px solid rgba(0,255,65,0.07);
+  transition:all 0.3s;
+  position:relative;
+  animation:slideR 0.4s ease-out both;
+}
+
+@keyframes slideR {
+  from { opacity:0; transform:translateX(10px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+
+.data-field:hover {
+  background:rgba(0,255,65,0.07);
+  border-left-color:var(--cyan);
+  border-left-width:3px;
+}
+
+.data-field::before {
+  content:attr(data-i);
+  position:absolute; top:8px; right:10px;
+  font-size:9px; color:rgba(0,255,65,0.18);
+  font-family:'Orbitron', monospace;
+}
+
+.d-lbl {
+  font-family:'Orbitron', monospace;
+  font-size:9px; letter-spacing:2px;
+  color:var(--cyan); text-shadow:var(--glow-c);
+  margin-bottom:3px; text-transform:uppercase;
+}
+
+.d-val { color:#c8ffc8; font-size:13px; word-break:break-word; }
+
+/* ── MAP ── */
+#mapBox {
+  grid-column:1/-1;
+  background:rgba(0,255,65,0.03);
+  border:1px solid rgba(0,212,255,0.2);
+  position:relative; overflow:hidden;
+  animation:fadeUp 0.5s ease-out 0.3s both;
+}
+
+#mapBox::before {
+  content:'';
+  position:absolute; top:0; left:-100%; width:50%; height:1px;
+  background:linear-gradient(90deg, transparent, var(--cyan), transparent);
+  animation:beam 5s linear infinite 2s;
+}
+
+#mapBox::after {
+  content:'';
+  position:absolute; top:0; left:0;
+  width:18px; height:18px;
+  border-top:2px solid var(--cyan);
+  border-left:2px solid var(--cyan);
+  box-shadow:var(--glow-c);
+  z-index:5;
+}
+
+.map-br {
+  position:absolute; bottom:0; right:0;
+  width:18px; height:18px;
+  border-bottom:2px solid var(--cyan);
+  border-right:2px solid var(--cyan);
+  box-shadow:var(--glow-c);
+  z-index:5;
+}
+
+.map-head {
+  display:flex; align-items:center; gap:8px;
+  padding:11px 16px;
+  border-bottom:1px solid rgba(0,212,255,0.15);
+  background:rgba(0,212,255,0.03);
+}
+
+.map-title {
+  font-family:'Orbitron', monospace;
+  font-size:10px; font-weight:700;
+  color:var(--cyan); letter-spacing:3px;
+  text-shadow:var(--glow-c);
+}
+
+.map-body { padding:14px; }
+
+#mapBox iframe {
+  border:1px solid rgba(0,212,255,0.2);
+  filter:invert(90%) hue-rotate(135deg) saturate(1.4) brightness(0.85);
+  display:block;
+}
+
+/* ── FOOTER ── */
+.footer {
+  text-align:center;
+  margin-top:28px;
+  padding:22px 20px;
+  border-top:1px solid rgba(0,255,65,0.1);
+  position:relative;
+}
+
+.footer::before {
+  content:'';
+  position:absolute; top:0; left:50%; transform:translateX(-50%);
+  width:180px; height:1px;
+  background:linear-gradient(90deg, transparent, var(--green), transparent);
+  box-shadow:var(--glow-g);
+}
+
+.footer p { font-size:10px; color:#3a6b3a; letter-spacing:3px; margin-bottom:6px; }
+
+.footer-credit {
+  font-family:'Orbitron', monospace;
+  font-size:11px; color:var(--cyan);
+  letter-spacing:2px; text-shadow:var(--glow-c);
+  margin-bottom:18px;
+}
+
+.back-btn {
+  display:inline-flex; align-items:center; gap:8px;
+  padding:10px 24px;
+  background:transparent;
+  border:1px solid var(--green);
+  color:var(--green);
+  font-family:'Orbitron', monospace;
+  font-size:10px; font-weight:700;
+  letter-spacing:3px; text-transform:uppercase;
+  cursor:pointer; text-decoration:none;
+  position:relative; overflow:hidden;
+  transition:all 0.3s;
+}
+
+.back-btn::before {
+  content:'';
+  position:absolute; top:0; left:-100%; width:100%; height:100%;
+  background:linear-gradient(90deg, transparent, rgba(0,255,65,0.15), transparent);
+  transition:left 0.4s;
+}
+
+.back-btn:hover::before { left:100%; }
+.back-btn:hover { box-shadow:var(--glow-g); color:#fff; }
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .grid { grid-template-columns:1fr; }
+  .stat-row { grid-template-columns:repeat(2,1fr); }
+  h1 { font-size:24px; letter-spacing:3px; }
+  #terminal { max-height:220px; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="matrixCanvas"></canvas>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-line"></div>
+    <div class="sys-tag">NEURAL-TRACE SYSTEM v4.2 // CLASSIFIED OUTPUT</div>
+    <h1>TRACE RESULTS</h1>
+    <div class="badges">
+      <div class="badge badge-g"><span class="dot"></span>LIVE SESSION</div>
+      <div class="badge badge-c" id="statusBadge">INITIALIZING...</div>
+      <div class="badge badge-g" id="clockBadge">--:--:--</div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stat-row">
+    <div class="stat-box">
+      <span class="stat-num" id="s1">00</span>
+      <div class="stat-lbl">Fields Found</div>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num" id="s2" style="color:var(--cyan);text-shadow:var(--glow-c);">0ms</span>
+      <div class="stat-lbl">Query Time</div>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num" id="s3" style="color:var(--pink);">ENC</span>
+      <div class="stat-lbl">Connection</div>
+    </div>
+    <div class="stat-box">
+      <span class="stat-num">99%</span>
+      <div class="stat-lbl">Accuracy</div>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="grid">
+
+    <!-- TERMINAL -->
+    <div class="panel">
+      <div class="corner-br"></div>
+      <div class="panel-head">
+        <div class="panel-title">// TRACE_LOG</div>
+        <div class="dots"><span></span><span></span><span></span></div>
+      </div>
+      <div class="panel-body">
+        <div class="prog-lbl" id="progLbl">STANDBY</div>
+        <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+        <div id="terminal"></div>
+      </div>
+    </div>
+
+    <!-- DATA -->
+    <div class="panel">
+      <div class="corner-br"></div>
+      <div class="panel-head">
+        <div class="panel-title">// EXTRACTED_DATA</div>
+        <div class="dots"><span></span><span></span><span></span></div>
+      </div>
+      <div class="panel-body">
+        <div id="dataDisplay"></div>
+      </div>
+    </div>
+
+    <!-- MAP -->
+    <div id="mapBox">
+      <div class="map-br"></div>
+      <div class="map-head">
+        <div class="map-title">// GEO_LOCATION :: LIVE PING</div>
+        <div class="dots" style="margin-left:auto">
+          <span style="background:var(--cyan)"></span>
+          <span style="background:var(--cyan)"></span>
+          <span style="background:var(--cyan)"></span>
+        </div>
+      </div>
+      <div class="map-body" id="mapInner">
+        <div style="color:#3a6b3a;font-size:12px;padding:40px 0;text-align:center;letter-spacing:3px;">
+          AWAITING COORDINATE DATA...
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>EDUCATIONAL PURPOSE ONLY &mdash; NOT TO HARM ANYONE</p>
+    <div class="footer-credit">[ CRAFTED BY SATYAM GUPTA ]</div>
+    <button class="back-btn" onclick="window.location.href='index.html'">&#8592; RETURN TO BASE</button>
+  </div>
+
+</div>
+
+<audio id="successAudio" src="success.mp3"></audio>
+
+<script>
+/* ── MATRIX RAIN ── */
+const canvas = document.getElementById('matrixCanvas');
+const ctx = canvas.getContext('2d');
+
+function resizeCanvas(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+const chars = 'アイウエオカキクケコ01001101TRACE SYSTEM NEURAL ENCODE';
+let drops = [];
+
+function initDrops(){
+  drops = Array(Math.floor(canvas.width/14)).fill(1);
+}
+initDrops();
+window.addEventListener('resize', initDrops);
+
+setInterval(function(){
+  ctx.fillStyle = 'rgba(1,10,1,0.05)';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.font = '13px Share Tech Mono';
+  for(let i=0;i<drops.length;i++){
+    ctx.fillStyle = Math.random()>0.9 ? '#00d4ff' : '#00ff41';
+    ctx.globalAlpha = Math.random()*0.5+0.3;
+    ctx.fillText(chars[Math.floor(Math.random()*chars.length)], i*14, drops[i]*14);
+    if(drops[i]*14>canvas.height && Math.random()>0.975) drops[i]=0;
+    drops[i]++;
+  }
+  ctx.globalAlpha=1;
+}, 40);
+
+/* ── CLOCK ── */
+setInterval(function(){
+  const n=new Date();
+  document.getElementById('clockBadge').textContent=
+    [n.getHours(),n.getMinutes(),n.getSeconds()].map(v=>String(v).padStart(2,'0')).join(':');
+},1000);
+
+/* ── HELPERS ── */
+function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+function log(text, cls){
+  const line=document.createElement('div');
+  line.className='t-line';
+  line.innerHTML='<span class="t-prompt c-cyan">&gt;</span><span class="'+(cls||'c-green')+'">'+text+'</span>';
+  document.getElementById('terminal').appendChild(line);
+  document.getElementById('terminal').scrollTop=9999;
+}
+
+let fi=0;
+function addField(label,value,cls){
+  fi++;
+  const d=document.createElement('div');
+  d.className='data-field';
+  d.setAttribute('data-i',String(fi).padStart(2,'0'));
+  d.style.animationDelay=(fi*70)+'ms';
+  d.innerHTML='<div class="d-lbl">'+label+'</div><div class="d-val '+(cls||'')+'">'+
+    (value||'<span style="color:#333">N/A</span>')+'</div>';
+  document.getElementById('dataDisplay').appendChild(d);
+  document.getElementById('s1').textContent=String(fi).padStart(2,'0');
+}
+
+function setProgress(pct,lbl){
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progLbl').textContent=lbl;
+}
+
+function setStatus(txt){ document.getElementById('statusBadge').textContent=txt; }
+
+function showMap(addr){
+  if(!addr) return;
+  document.getElementById('mapInner').innerHTML=
+    '<iframe width="100%" height="300" frameborder="0" scrolling="no"'+
+    ' src="https://maps.google.com/maps?q='+encodeURIComponent(addr)+'&z=14&output=embed"></iframe>';
+}
+
+/* ── MAIN (YOUR ORIGINAL WORKING LOGIC — UNCHANGED) ── */
+const params = new URLSearchParams(window.location.search);
+const num = params.get('num');
+
+async function start(){
+  const t0 = Date.now();
+
+  setProgress(5,'BOOTING...');
+  log('NEURAL-TRACE SYSTEM ONLINE','c-green');
+  await delay(200);
+
+  if(!num){
+    log('ERROR :: No number in URL','c-pink');
+    log('USAGE: result.html?num=XXXXXXXXXX','c-yellow');
+    addField('STATUS','No ?num= param found','c-pink');
+    setStatus('NO TARGET');
+    setProgress(100,'IDLE');
+    return;
+  }
+
+  log('Target acquired: '+num,'c-cyan');
+  setProgress(20,'VALIDATING...');
+  await delay(300);
+
+  log('Connecting to server...','c-cyan');
+  setProgress(40,'CONNECTING...');
+  await delay(400);
+
+  log('Querying database...','');
+  setProgress(60,'QUERYING...');
+
+  try{
+
+    // ✅ YOUR ORIGINAL WORKING API CALL — UNCHANGED
+    const res = await fetch(`https://ayaanmods.site/number.php?key=annonymous&number=${encodeURIComponent(num)}`);
+
+    if(!res.ok) throw new Error('HTTP '+res.status);
+
+    const json = await res.json();
+    console.log('API RAW:', json);
+
+    // Smart parser (same as your working version)
+    let data = null;
+    if(json.result && Array.isArray(json.result))       data = json.result[0];
+    else if(json.result)                                 data = json.result;
+    else if(Array.isArray(json) && json.length>0)       data = json[0];
+    else if(json.data && Array.isArray(json.data))      data = json.data[0];
+    else if(json.name || json.mobile || json.address)   data = json;
+    else                                                 data = json;
+
+    const elapsed = Date.now()-t0;
+    document.getElementById('s2').textContent=elapsed+'ms';
+    document.getElementById('s3').textContent='TLS';
+    setProgress(75,'PARSING...');
+    await delay(300);
+
+    if(!data || Object.keys(data).length===0){
+      log('WARN :: No records found','c-yellow');
+      addField('STATUS','No results found for: '+num,'c-yellow');
+      setStatus('NO DATA');
+      setProgress(100,'NO RESULTS');
+      return;
+    }
+
+    log('SUCCESS :: Data retrieved','c-green');
+    setProgress(85,'DECRYPTING FIELDS...');
+    await delay(300);
+    setStatus('DATA FOUND');
+
+    // Same field mapping as your working version
+    const mobile  = data.mobile      || data.number    || num;
+    const name    = data.name        || '';
+    const father  = data.father_name || data.father    || '';
+    const address = data.address     || '';
+    const circle  = data.circle      || data.operator  || '';
+    const id      = data.id          || data.id_number || '';
+
+    const fields=[
+      ['📱 MOBILE NUMBER', mobile,  'c-yellow'],
+      ['👤 FULL NAME',     name,    'c-green'],
+      ['👨 FATHER NAME',   father,  ''],
+      ['📍 ADDRESS',       address, ''],
+      ['📡 CIRCLE',        circle,  'c-cyan'],
+      ['🆔 ID NUMBER',     id,      'c-pink'],
+    ];
+
+    for(const [lbl,val,cls] of fields){
+      log('Extracting: '+lbl,'c-cyan');
+      addField(lbl, val||'N/A', cls);
+      await delay(100);
+    }
+
+    setProgress(95,'GEOLOCATING...');
+    log('Pinging geolocation...','c-yellow');
+    await delay(700);
+    showMap(address);
+
+    setProgress(100,'TRACE COMPLETE');
+    log('ALL FIELDS EXTRACTED SUCCESSFULLY','c-green');
+
+    try{
+      const a=document.getElementById('successAudio');
+      a.currentTime=0; a.play().catch(()=>{});
+    }catch(e){}
+
+  }catch(e){
+    console.error(e);
+    log('ERROR :: '+e.message,'c-pink');
+    addField('STATUS','Error: '+e.message,'c-pink');
+    setStatus('ERROR');
+    setProgress(100,'ERROR');
+  }
+}
+
+start();
+</script>
+</body>
+</html>
