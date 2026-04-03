@@ -1,8 +1,8 @@
 export default async function handler(req, res) {
-  const { num } = req.query;
+  const num = req.query.num;
 
   if (!num) {
-    return res.status(400).json({ error: "No number provided" });
+    return res.status(400).json({ error: "No number" });
   }
 
   try {
@@ -12,17 +12,20 @@ export default async function handler(req, res) {
 
     const text = await response.text();
 
-    // Force JSON parse (kyunki API header galat ho sakta hai)
+    // Force JSON
     let data;
     try {
       data = JSON.parse(text);
-    } catch (e) {
-      return res.status(500).json({ error: "Invalid JSON from API", raw: text });
+    } catch {
+      return res.status(500).json({ error: "Invalid JSON", raw: text });
     }
 
-    res.status(200).json(data);
+    return res.status(200).json(data);
 
   } catch (err) {
-    res.status(500).json({ error: "Fetch failed", message: err.message });
+    return res.status(500).json({
+      error: "Fetch failed",
+      message: err.message
+    });
   }
-}
+} pj
