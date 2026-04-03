@@ -1,13 +1,69 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <title>Loading...</title>
-    <link rel="stylesheet" href="styles.css">
-    <script src="script.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #00ffcc, #ff0090);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+        h1 {
+            color: #fff;
+            text-align: center;
+            margin-top: 20%;
+            font-size: 4rem;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            animation: float 6s infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+            100% { transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-    <div class="loading-container">
-        <h1>Loading...</h1>
-        <div class="spinner"></div>
-    </div>
+    <h1>Loading...</h1>
+    <script>
+        function createParticles() {
+            const numParticles = 100;
+            for (let i = 0; i < numParticles; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                const size = Math.random() * 8 + 2;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.top = `${Math.random() * 100}vh`;
+                particle.style.left = `${Math.random() * 100}vw`;
+                document.body.appendChild(particle);
+                animateParticle(particle);
+            }
+        }
+
+        function animateParticle(particle) {
+            particle.style.animationDuration = `${Math.random() * 3 + 3}s`;
+            particle.style.opacity = Math.random();
+            setTimeout(() => {
+                particle.remove();
+            }, 6000);
+        }
+
+        createParticles();
+    </script>
 </body>
 </html>
