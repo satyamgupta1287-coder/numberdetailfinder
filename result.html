@@ -927,8 +927,7 @@ async function start() {
 
   try {
     const res = await fetch(
-      `https://ayaanmods.site/number.php?key=annonymous&number=${encodeURIComponent(num)}`,
-      {
+      /api/getdata?num=${encodeURIComponent(num)}
         method: 'GET',
         headers: { 'Accept': 'application/json' },
         mode: 'cors'
