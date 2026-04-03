@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TRACE_SYS :: RESULT OUTPUT</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  background:#010a01;
+  color:#00ff41;
+  font-family:monospace;
+  padding:20px;
+}
+#terminal {margin-bottom:20px;}
+.data-field {margin:10px 0;padding:10px;border-left:2px solid #00ff41;}
+</style>
+</head>
+
+<body>
+
+<h2>TRACE RESULT</h2>
+
+<div id="terminal"></div>
+<div id="dataDisplay"></div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const num = params.get('num');
+
+const terminal = document.getElementById("terminal");
+const dataDisplay = document.getElementById("dataDisplay");
+
+function log(text){
+  const div = document.createElement("div");
+  div.textContent = "> " + text;
+  terminal.appendChild(div);
+}
+
+function addField(label,value){
+  const div = document.createElement("div");
+  div.className = "data-field";
+  div.innerHTML = "<b>"+label+":</b> "+(value || "N/A");
+  dataDisplay.appendChild(div);
+}
+
+async function start(){
+
+  if(!num){
+    log("No number provided");
+    return;
+  }
+
+  log("Target: "+num);
+  log("Connecting to server...");
+
+  try{
+
+    // ✅ FIXED API CALL
+    const res = await fetch(`/api/getdata?num=${encodeURIComponent(num)}`);
+
+    if(!res.ok) throw new Error("API ERROR");
+
+    const json = await res.json();
+    console.log("API:",json);
+
+    let data = null;
+
+    // Smart parser
+    if (json.result && Array.isArray(json.result)) data = json.result[0];
+    else if (json.result) data = json.result;
+    else if (Array.isArray(json)) data = json[0];
+    else data = json;
+
+    if(!data){
+      log("No data found");
+      return;
+    }
+
+    log("Data received ✔");
+
+    const mobile  = data.mobile || data.number || num;
+    const name    = data.name || "";
+    const father  = data.father_name || "";
+    const address = data.address || "";
+    const circle  = data.circle || "";
+    const id      = data.id || "";
+
+    addField("Mobile", mobile);
+    addField("Name", name);
+    addField("Father", father);
+    addField("Address", address);
+    addField("Circle", circle);
+    addField("ID", id);
+
+    log("Completed ✔");
+
+  }catch(e){
+    log("Error: "+e.message);
+  }
+}
+
+start();
+</script>
+
+</body>
+</html>
