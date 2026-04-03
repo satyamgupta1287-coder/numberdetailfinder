@@ -1,22 +1,28 @@
 export default async function handler(req, res) {
-  try {
-    const { number } = req.query;
+  const { num } = req.query;
 
-    if (!number) {
-      return res.status(400).json({ error: "Number missing" });
+  if (!num) {
+    return res.status(400).json({ error: "No number provided" });
+  }
+
+  try {
+    const response = await fetch(
+      `https://ayaanmods.site/number.php?key=annonymous&number=${num}`
+    );
+
+    const text = await response.text();
+
+    // Force JSON parse (kyunki API header galat ho sakta hai)
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch (e) {
+      return res.status(500).json({ error: "Invalid JSON from API", raw: text });
     }
 
-    const apiUrl = `https://cyber-testing-api.vercel.app/num2info?key=CYBER_TEST&number=${number}`;
+    res.status(200).json(data);
 
-    const response = await fetch(apiUrl);
-    const data = await response.json();
-
-    return res.status(200).json(data);
-
-  } catch (error) {
-    return res.status(500).json({
-      error: "Server error",
-      details: error.message
-    });
+  } catch (err) {
+    res.status(500).json({ error: "Fetch failed", message: err.message });
   }
 }
