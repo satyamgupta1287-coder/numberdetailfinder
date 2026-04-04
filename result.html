@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TRACE_SYS :: RESULT OUTPUT</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --green:#00ff41;
+  --cyan:#00d4ff;
+  --pink:#ff0080;
+  --yellow:#ffea00;
+  --glow-g:0 0 8px #00ff41,0 0 18px rgba(0,255,65,0.4);
+  --glow-c:0 0 8px #00d4ff,0 0 18px rgba(0,212,255,0.3);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+#matrixCanvas{
+  position:fixed;top:0;left:0;
+  width:100%;height:100%;
+  z-index:0;opacity:0.07;
+  pointer-events:none;
+}
+
+body::before{
+  content:'';position:fixed;top:0;left:0;
+  width:100%;height:100%;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.07) 2px,rgba(0,0,0,0.07) 4px);
+  z-index:1;pointer-events:none;
+}
+
+body::after{
+  content:'';position:fixed;top:0;left:0;
+  width:100%;height:100%;
+  background:radial-gradient(ellipse at center,transparent 40%,rgba(0,0,0,0.85) 100%);
+  z-index:1;pointer-events:none;
+}
+
+body{
+  background:#010a01;
+  color:var(--green);
+  font-family:'Share Tech Mono',monospace;
+  min-height:100vh;
+  padding:20px;
+  overflow-x:hidden;
+}
+
+.wrap{
+  max-width:1100px;margin:0 auto;
+  position:relative;z-index:10;
+  animation:fadeUp 0.5s ease-out both;
+}
+
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* HEADER */
+.hdr{text-align:center;padding:30px 20px 25px;position:relative;margin-bottom:22px;}
+.hdr-line{
+  position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--green),var(--cyan),var(--green),transparent);
+  animation:lp 3s ease-in-out infinite;
+}
+@keyframes lp{0%,100%{opacity:0.5;}50%{opacity:1;box-shadow:0 0 15px var(--green);}}
+
+.sys-tag{font-size:10px;letter-spacing:4px;color:#3a6b3a;margin-bottom:10px;}
+
+h1{
+  font-family:'Orbitron',monospace;
+  font-size:clamp(22px,5vw,50px);
+  font-weight:900;letter-spacing:6px;
+  color:var(--green);text-shadow:var(--glow-g);
+  animation:glitch 6s infinite;
+}
+
+@keyframes glitch{
+  0%,88%,100%{text-shadow:var(--glow-g);transform:none;}
+  89%{text-shadow:-2px 0 var(--pink),2px 0 var(--cyan);transform:translate(-1px);}
+  90%{text-shadow:2px 0 var(--pink),-2px 0 var(--cyan);transform:translate(1px);}
+  91%{text-shadow:var(--glow-g);transform:none;}
+  94%{text-shadow:-3px 0 var(--cyan);transform:translate(2px,-1px);}
+  95%{text-shadow:var(--glow-g);transform:none;}
+}
+
+.badges{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:14px;}
+.badge{
+  font-size:10px;font-family:'Orbitron',monospace;
+  letter-spacing:2px;padding:5px 14px;border:1px solid;text-transform:uppercase;
+}
+.bg{color:var(--green);border-color:var(--green);box-shadow:var(--glow-g);animation:bp 2s infinite;}
+.bc{color:var(--cyan);border-color:var(--cyan);box-shadow:var(--glow-c);}
+@keyframes bp{0%,100%{box-shadow:var(--glow-g);}50%{box-shadow:0 0 20px var(--green),0 0 40px rgba(0,255,65,0.5);}}
+
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:var(--glow-g);animation:blink 1s step-end infinite;margin-right:5px;vertical-align:middle;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px;}
+.sbox{
+  background:rgba(0,255,65,0.03);border:1px solid rgba(0,255,65,0.2);
+  padding:13px;text-align:center;transition:border-color 0.3s;position:relative;overflow:hidden;
+}
+.sbox::after{
+  content:'';position:absolute;bottom:0;left:0;
+  width:100%;height:2px;
+  background:linear-gradient(90deg,transparent,var(--green),transparent);
+  transform:scaleX(0);transition:transform 0.4s;
+}
+.sbox:hover{border-color:var(--green);}
+.sbox:hover::after{transform:scaleX(1);}
+.snum{
+  font-family:'Orbitron',monospace;font-size:20px;font-weight:900;
+  display:block;line-height:1;margin-bottom:4px;
+}
+.slbl{font-size:9px;letter-spacing:2px;color:#3a6b3a;text-transform:uppercase;}
+
+/* GRID */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+
+/* PANEL */
+.panel{
+  background:rgba(0,255,65,0.03);
+  border:1px solid rgba(0,255,65,0.22);
+  position:relative;overflow:hidden;
+}
+.panel::before{
+  content:'';position:absolute;top:0;left:-100%;width:50%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--green),transparent);
+  animation:beam 4s linear infinite;
+}
+.panel:nth-child(2)::before{animation-delay:2s;}
+@keyframes beam{0%{left:-100%}100%{left:200%}}
+
+.panel::after{
+  content:'';position:absolute;top:0;left:0;
+  width:18px;height:18px;
+  border-top:2px solid var(--green);border-left:2px solid var(--green);
+  box-shadow:var(--glow-g);
+}
+.cbr{
+  position:absolute;bottom:0;right:0;width:18px;height:18px;
+  border-bottom:2px solid var(--green);border-right:2px solid var(--green);
+  box-shadow:var(--glow-g);
+}
+
+.phead{
+  display:flex;align-items:center;gap:8px;
+  padding:11px 16px;
+  border-bottom:1px solid rgba(0,255,65,0.15);
+  background:rgba(0,255,65,0.04);
+}
+.ptitle{
+  font-family:'Orbitron',monospace;font-size:10px;font-weight:700;
+  color:var(--green);letter-spacing:3px;text-shadow:var(--glow-g);
+}
+.pdots{display:flex;gap:5px;margin-left:auto;}
+.pdots span{width:6px;height:6px;border-radius:50%;background:var(--green);opacity:0.35;}
+.pdots span:first-child{opacity:0.9;animation:blink 1.5s infinite;}
+.pdots span:nth-child(2){animation:blink 1.5s 0.5s infinite;}
+
+.pbody{padding:16px;}
+
+/* PROGRESS */
+.plbl{font-size:10px;color:#3a6b3a;letter-spacing:1px;margin-bottom:6px;}
+.pbar{height:2px;background:rgba(0,255,65,0.1);margin-bottom:14px;position:relative;overflow:visible;}
+.pfill{
+  height:100%;
+  background:linear-gradient(90deg,var(--cyan),var(--green));
+  box-shadow:0 0 8px var(--green);
+  width:0%;transition:width 1.5s ease-out;
+  position:relative;
+}
+.pfill::after{
+  content:'';position:absolute;right:0;top:-3px;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--green);box-shadow:var(--glow-g);
+}
+
+/* TERMINAL */
+#terminal{
+  font-size:12.5px;line-height:2;
+  color:var(--green);
+  max-height:340px;overflow-y:auto;min-height:160px;
+}
+#terminal::-webkit-scrollbar{width:3px;}
+#terminal::-webkit-scrollbar-thumb{background:var(--green);}
+
+.tline{
+  display:flex;gap:8px;
+  border-bottom:1px solid rgba(0,255,65,0.05);padding:1px 0;
+  animation:li 0.25s ease-out both;
+}
+@keyframes li{from{opacity:0;transform:translateX(-6px);}to{opacity:1;transform:translateX(0);}}
+
+/* DATA FIELDS */
+.data-field{
+  margin:8px 0;padding:11px 13px;
+  background:rgba(0,255,65,0.03);
+  border-left:2px solid var(--green);
+  border-bottom:1px solid rgba(0,255,65,0.07);
+  word-break:break-word;
+  transition:all 0.3s;
+  animation:sr 0.4s ease-out both;
+}
+@keyframes sr{from{opacity:0;transform:translateX(10px);}to{opacity:1;transform:translateX(0);}}
+.data-field:hover{background:rgba(0,255,65,0.07);border-left-color:var(--cyan);border-left-width:3px;}
+
+.data-field b{
+  display:block;
+  font-family:'Orbitron',monospace;
+  font-size:9px;letter-spacing:2px;
+  color:var(--cyan);text-shadow:var(--glow-c);
+  margin-bottom:3px;font-weight:normal;
+}
+
+/* MAP */
+#mapBox{
+  grid-column:1/-1;
+  background:rgba(0,255,65,0.03);
+  border:1px solid rgba(0,212,255,0.2);
+  position:relative;overflow:hidden;
+}
+#mapBox::before{
+  content:'';position:absolute;top:0;left:-100%;width:50%;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  animation:beam 5s linear infinite 2s;
+}
+#mapBox::after{
+  content:'';position:absolute;top:0;left:0;
+  width:18px;height:18px;
+  border-top:2px solid var(--cyan);border-left:2px solid var(--cyan);
+  box-shadow:var(--glow-c);z-index:5;
+}
+.mbr{
+  position:absolute;bottom:0;right:0;width:18px;height:18px;
+  border-bottom:2px solid var(--cyan);border-right:2px solid var(--cyan);
+  box-shadow:var(--glow-c);z-index:5;
+}
+.mhead{
+  display:flex;align-items:center;gap:8px;
+  padding:11px 16px;
+  border-bottom:1px solid rgba(0,212,255,0.15);
+  background:rgba(0,212,255,0.03);
+}
+.mtitle{
+  font-family:'Orbitron',monospace;font-size:10px;font-weight:700;
+  color:var(--cyan);letter-spacing:3px;text-shadow:var(--glow-c);
+}
+.mbody{padding:14px;}
+#mapBox iframe{
+  border:1px solid rgba(0,212,255,0.2);
+  filter:invert(90%) hue-rotate(135deg) saturate(1.4) brightness(0.85);
+  display:block;
+}
+
+/* FOOTER */
+.footer{
+  text-align:center;margin-top:26px;
+  padding:20px;border-top:1px solid rgba(0,255,65,0.1);
+  position:relative;
+}
+.footer::before{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:180px;height:1px;
+  background:linear-gradient(90deg,transparent,var(--green),transparent);
+  box-shadow:var(--glow-g);
+}
+.footer p{font-size:10px;color:#3a6b3a;letter-spacing:3px;margin-bottom:6px;}
+.credit{
+  font-family:'Orbitron',monospace;font-size:11px;
+  color:var(--cyan);letter-spacing:2px;text-shadow:var(--glow-c);margin-bottom:18px;
+}
+.bbtn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 24px;background:transparent;
+  border:1px solid var(--green);color:var(--green);
+  font-family:'Orbitron',monospace;font-size:10px;font-weight:700;
+  letter-spacing:3px;text-transform:uppercase;
+  cursor:pointer;text-decoration:none;
+  position:relative;overflow:hidden;transition:all 0.3s;
+}
+.bbtn::before{
+  content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(0,255,65,0.15),transparent);
+  transition:left 0.4s;
+}
+.bbtn:hover::before{left:100%;}
+.bbtn:hover{box-shadow:var(--glow-g);color:#fff;}
+
+@media(max-width:768px){
+  .grid{grid-template-columns:1fr;}
+  .stats{grid-template-columns:repeat(2,1fr);}
+  h1{font-size:22px;letter-spacing:3px;}
+  #terminal{max-height:200px;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="matrixCanvas"></canvas>
+
+<div class="wrap">
+
+  <div class="hdr">
+    <div class="hdr-line"></div>
+    <div class="sys-tag">NEURAL-TRACE SYSTEM v4.2 // CLASSIFIED OUTPUT</div>
+    <h1>TRACE RESULTS</h1>
+    <div class="badges">
+      <div class="badge bg"><span class="dot"></span>LIVE SESSION</div>
+      <div class="badge bc" id="statusBadge">INITIALIZING...</div>
+      <div class="badge bg" id="clockBadge">--:--:--</div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="sbox">
+      <span class="snum" id="s1">00</span>
+      <div class="slbl">Fields Found</div>
+    </div>
+    <div class="sbox">
+      <span class="snum" id="s2" style="color:var(--cyan);text-shadow:var(--glow-c)">0ms</span>
+      <div class="slbl">Query Time</div>
+    </div>
+    <div class="sbox">
+      <span class="snum" id="s3" style="color:var(--pink)">ENC</span>
+      <div class="slbl">Connection</div>
+    </div>
+    <div class="sbox">
+      <span class="snum">99%</span>
+      <div class="slbl">Accuracy</div>
+    </div>
+  </div>
+
+  <div class="grid">
+
+    <div class="panel">
+      <div class="cbr"></div>
+      <div class="phead">
+        <div class="ptitle">// TRACE_LOG</div>
+        <div class="pdots"><span></span><span></span><span></span></div>
+      </div>
+      <div class="pbody">
+        <div class="plbl" id="progLbl">STANDBY</div>
+        <div class="pbar"><div class="pfill" id="progFill"></div></div>
+        <div id="terminal"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="cbr"></div>
+      <div class="phead">
+        <div class="ptitle">// EXTRACTED_DATA</div>
+        <div class="pdots"><span></span><span></span><span></span></div>
+      </div>
+      <div class="pbody">
+        <div id="dataDisplay"></div>
+      </div>
+    </div>
+
+    <div id="mapBox">
+      <div class="mbr"></div>
+      <div class="mhead">
+        <div class="mtitle">// GEO_LOCATION :: LIVE PING</div>
+        <div class="pdots" style="margin-left:auto">
+          <span style="background:var(--cyan)"></span>
+          <span style="background:var(--cyan)"></span>
+          <span style="background:var(--cyan)"></span>
+        </div>
+      </div>
+      <div class="mbody" id="mapInner">
+        <div style="color:#3a6b3a;font-size:12px;padding:40px 0;text-align:center;letter-spacing:3px;">
+          AWAITING COORDINATE DATA...
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <p>EDUCATIONAL PURPOSE ONLY &mdash; NOT TO HARM ANYONE</p>
+    <div class="credit">[ CRAFTED BY SATYAM GUPTA ]</div>
+    <button class="bbtn" onclick="window.location.href='index.html'">&#8592; RETURN TO BASE</button>
+  </div>
+
+</div>
+
+<audio id="successAudio" src="success.mp3"></audio>
+
+<script>
+/* \u2500\u2500 MATRIX RAIN \u2500\u2500 */
+const canvas = document.getElementById('matrixCanvas');
+const ctx = canvas.getContext('2d');
+function resize(){ canvas.width=window.innerWidth; canvas.height=window.innerHeight; }
+resize(); window.addEventListener('resize',resize);
+const chars='\u30a2\u30a4\u30a6\u30a8\u30aa\u30ab\u30ad\u30af\u30b1\u30b301001101TRACE SYSTEM ENCODE';
+let drops=[];
+function initDrops(){ drops=Array(Math.floor(canvas.width/14)).fill(1); }
+initDrops(); window.addEventListener('resize',initDrops);
+setInterval(function(){
+  ctx.fillStyle='rgba(1,10,1,0.05)'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.font='13px monospace';
+  for(let i=0;i<drops.length;i++){
+    ctx.fillStyle=Math.random()>0.9?'#00d4ff':'#00ff41';
+    ctx.globalAlpha=Math.random()*0.5+0.3;
+    ctx.fillText(chars[Math.floor(Math.random()*chars.length)],i*14,drops[i]*14);
+    if(drops[i]*14>canvas.height&&Math.random()>0.975) drops[i]=0;
+    drops[i]++;
+  }
+  ctx.globalAlpha=1;
+},40);
+
+/* \u2500\u2500 CLOCK \u2500\u2500 */
+setInterval(function(){
+  const n=new Date();
+  document.getElementById('clockBadge').textContent=
+    [n.getHours(),n.getMinutes(),n.getSeconds()].map(v=>String(v).padStart(2,'0')).join(':');
+},1000);
+
+/* \u2500\u2500 UI HELPERS \u2500\u2500 */
+function setProgress(pct,lbl){
+  document.getElementById('progFill').style.width=pct+'%';
+  document.getElementById('progLbl').textContent=lbl;
+}
+function setStatus(t){ document.getElementById('statusBadge').textContent=t; }
+
+function showMap(addr){
+  if(!addr) return;
+  document.getElementById('mapInner').innerHTML=
+    '<iframe width="100%" height="300" frameborder="0" scrolling="no"'+
+    ' src="https://maps.google.com/maps?q='+encodeURIComponent(addr)+'&z=14&output=embed"></iframe>';
+}
+
+/* \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550
+   YOUR ORIGINAL WORKING JS \u2014 UNCHANGED
+   \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550 */
+const params = new URLSearchParams(window.location.search);
+const num = params.get('num');
+
+const terminal = document.getElementById("terminal");
+const dataDisplay = document.getElementById("dataDisplay");
+
+function log(text){
+  const div = document.createElement("div");
+  div.className = "tline";
+  div.innerHTML = '<span style="color:var(--cyan)">></span><span>' + text + '</span>';
+  terminal.appendChild(div);
+  terminal.scrollTop = terminal.scrollHeight;
+}
+
+function addField(label, value){
+  const div = document.createElement("div");
+  div.className = "data-field";
+  div.innerHTML = "<b>" + label + "</b>" + (value || "N/A");
+  dataDisplay.appendChild(div);
+  // update fields count
+  const cur = parseInt(document.getElementById('s1').textContent)||0;
+  document.getElementById('s1').textContent = String(cur+1).padStart(2,'0');
+}
+
+// \ud83d\udd25 FULL DATA RENDER (your recursive function \u2014 unchanged)
+function showAllData(data){
+  dataDisplay.innerHTML = "";
+  document.getElementById('s1').textContent = '00';
+
+  function render(obj, prefix){
+    prefix = prefix || "";
+    for(let key in obj){
+      const value = obj[key];
+      if(typeof value === "object" && value !== null){
+        render(value, prefix + key + " \u2192 ");
+      } else {
+        addField((prefix + key).toUpperCase(), value);
+      }
+    }
+  }
+
+  render(data);
+}
+
+async function start(){
+
+  if(!num){
+    log("No number provided");
+    set
