@@ -6,8 +6,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const url = `https://ayaanmods.site/number.php?key=annonymous&number=${num}`;
-
+    const url = `https://cyber-osint-num-infos.vercel.app/api/numinfo?key=Anonymous&num=${num}`;
     // 🔥 IMPORTANT: fetch ko safe banaya
     const response = await fetch(url, {
       method: "GET"
