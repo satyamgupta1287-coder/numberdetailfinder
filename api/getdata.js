@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const url = `https://cyber-osint-num-infos.vercel.app/api/numinfo?key=Anonymous&num=${num}`;
+    const url = `https://ft-osint-api.duckdns.org/api/number?key=nbt-7d-k9xp2lmq8zrt5&num=${num}`;
     // 🔥 IMPORTANT: fetch ko safe banaya
     const response = await fetch(url, {
       method: "GET"
