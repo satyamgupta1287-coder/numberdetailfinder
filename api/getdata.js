@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const url = `https://ft-osint-api.duckdns.org/api/number?key=nbt-7d-k9xp2lmq8zrt5&num=${num}`;
+    const url = `https://mean-folders-athletic-divide.trycloudflare.com/search/number?number=${num}&key=Mauryaji12`;
     // 🔥 IMPORTANT: fetch ko safe banaya
     const response = await fetch(url, {
       method: "GET"
