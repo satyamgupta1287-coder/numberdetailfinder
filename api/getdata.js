@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const url = `https://users-xinfo-admin-six.vercel.app/api?key=qwertyuioplk847isuhnsiandj&type=mobile&term=$`;
+    const url = `https://sbsakib.eu.cc/apis/num_info_v1?key=Test&num=${num}`;
     // 🔥 IMPORTANT: fetch ko safe banaya
     const response = await fetch(url, {
       method: "GET"
