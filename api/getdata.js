@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const url = `https://mean-folders-athletic-divide.trycloudflare.com/search/number?number=${num}&key=Mauryaji12`;
+    const url = `https://users-xinfo-admin-six.vercel.app/api?key=qwertyuioplk847isuhnsiandj&type=mobile&term=$`;
     // 🔥 IMPORTANT: fetch ko safe banaya
     const response = await fetch(url, {
       method: "GET"
