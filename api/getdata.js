@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const url = `https://sbsakib.eu.cc/apis/num_info_v1?key=Test&num=${num}`;
+    const url = `https://techvishalboss.com/api/v1/lookup.php?key=TVB_SGL_69F53CA4&service=number&number=${num}`;
     // 🔥 IMPORTANT: fetch ko safe banaya
     const response = await fetch(url, {
       method: "GET"
