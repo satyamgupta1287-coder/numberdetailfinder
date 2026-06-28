@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const url = `https://api.vectorxo.online/lookup?key=vectorxo&mobile=${num}`;
+    const url = `https://ft-osint-api.duckdns.org/api/numleak?key=freetill1&num=${num}`;
     // 🔥 IMPORTANT: fetch ko safe banaya
     const response = await fetch(url, {
       method: "GET"
