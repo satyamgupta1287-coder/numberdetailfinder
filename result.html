@@ -525,7 +525,7 @@ async function start(){
     const res = await fetch("/api/getdata?num=" + encodeURIComponent(num));
     const json = await res.json();
     console.log("API:", json);
-    log("RAW: " + JSON.stringify(json).slice(0, 500));
+    log("Response received from server...");
 
     document.getElementById('s2').textContent = (Date.now() - t0) + "ms";
     document.getElementById('s3').textContent = "TLS";
