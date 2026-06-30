@@ -15,7 +15,6 @@ body {
   font-family: 'Share Tech Mono', monospace;
   min-height: 100vh;
   padding: 16px;
-  /* scanline effect */
   background-image: repeating-linear-gradient(
     0deg,
     transparent,
@@ -25,7 +24,6 @@ body {
   );
 }
 
-/* ── HEADER ── */
 .header {
   text-align: center;
   padding: 24px 10px 20px;
@@ -102,7 +100,6 @@ h1 {
 
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
 
-/* ── STATS ── */
 .stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -126,7 +123,6 @@ h1 {
 
 .slbl { font-size: 9px; letter-spacing: 2px; color: #2a5a2a; margin-top: 4px; }
 
-/* ── PANELS ── */
 .grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -140,7 +136,6 @@ h1 {
   position: relative;
 }
 
-/* corner brackets */
 .panel::before {
   content: '';
   position: absolute; top: 0; left: 0;
@@ -186,7 +181,6 @@ h1 {
 
 .panel-body { padding: 14px; }
 
-/* progress */
 .prog-lbl { font-size: 10px; color: #2a5a2a; letter-spacing: 1px; margin-bottom: 5px; }
 .prog-bar  { height: 2px; background: rgba(0,255,65,0.1); margin-bottom: 12px; }
 .prog-fill {
@@ -197,7 +191,6 @@ h1 {
   transition: width 1.5s ease-out;
 }
 
-/* terminal */
 #terminal {
   font-size: 12px;
   line-height: 1.9;
@@ -209,7 +202,6 @@ h1 {
 #terminal::-webkit-scrollbar { width: 3px; }
 #terminal::-webkit-scrollbar-thumb { background: #00ff41; }
 
-/* data fields */
 .data-field {
   margin: 8px 0;
   padding: 10px 12px;
@@ -235,7 +227,19 @@ h1 {
 
 .data-field span { color: #c8ffc8; font-size: 13px; }
 
-/* map */
+/* group header for each record when API returns multiple results */
+.record-header {
+  margin: 16px 0 8px;
+  padding: 6px 10px;
+  font-family: 'Orbitron', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #ff0080;
+  border: 1px solid rgba(255,0,128,0.35);
+  background: rgba(255,0,128,0.05);
+  text-shadow: 0 0 6px rgba(255,0,128,0.6);
+}
+
 #mapBox {
   grid-column: 1 / -1;
   border: 1px solid rgba(0,212,255,0.25);
@@ -281,7 +285,6 @@ h1 {
   filter: invert(90%) hue-rotate(135deg) saturate(1.3) brightness(0.85);
 }
 
-/* footer */
 .footer {
   text-align: center;
   margin-top: 24px;
@@ -310,7 +313,6 @@ h1 {
   color: #fff;
 }
 
-/* responsive */
 @media(max-width: 600px) {
   .grid  { grid-template-columns: 1fr; }
   .stats { grid-template-columns: repeat(2,1fr); }
@@ -320,7 +322,6 @@ h1 {
 </head>
 <body>
 
-<!-- HEADER -->
 <div class="header">
   <div class="sys-tag">NEURAL-TRACE SYSTEM v4.2 // CLASSIFIED OUTPUT</div>
   <h1>TRACE RESULTS</h1>
@@ -331,7 +332,6 @@ h1 {
   </div>
 </div>
 
-<!-- STATS -->
 <div class="stats">
   <div class="sbox">
     <span class="snum" id="s1" style="color:#00ff41">00</span>
@@ -351,10 +351,8 @@ h1 {
   </div>
 </div>
 
-<!-- MAIN GRID -->
 <div class="grid">
 
-  <!-- Terminal -->
   <div class="panel">
     <div class="panel-head">
       // TRACE_LOG
@@ -367,7 +365,6 @@ h1 {
     </div>
   </div>
 
-  <!-- Data -->
   <div class="panel">
     <div class="panel-head">
       // EXTRACTED_DATA
@@ -378,7 +375,6 @@ h1 {
     </div>
   </div>
 
-  <!-- Map -->
   <div id="mapBox">
     <div class="map-head">// GEO_LOCATION :: LIVE PING</div>
     <div class="map-body" id="mapInner">
@@ -390,7 +386,6 @@ h1 {
 
 </div>
 
-<!-- FOOTER -->
 <div class="footer">
   <p>EDUCATIONAL PURPOSE ONLY — NOT TO HARM ANYONE</p>
   <div class="credit">[ CRAFTED BY SATYAM GUPTA ]</div>
@@ -424,10 +419,6 @@ function showMap(addr){
     ' src="https://maps.google.com/maps?q=' + encodeURIComponent(addr) + '&z=14&output=embed"></iframe>';
 }
 
-/* ════════════════════════════════════
-   YOUR ORIGINAL WORKING JS — UNTOUCHED
-   ════════════════════════════════════ */
-
 const params = new URLSearchParams(window.location.search);
 const num = params.get('num');
 
@@ -449,34 +440,67 @@ function addField(label, value){
   div.innerHTML = "<b>" + label + "</b><span>" + (value || "N/A") + "</span>";
   dataDisplay.appendChild(div);
 
-  // update field count
   const cur = parseInt(document.getElementById('s1').textContent) || 0;
   document.getElementById('s1').textContent = String(cur + 1).padStart(2, '0');
 }
 
-// 🔥 FULL DATA RENDER — your recursive function, unchanged
+function addRecordHeader(text){
+  const div = document.createElement("div");
+  div.className = "record-header";
+  div.textContent = text;
+  dataDisplay.appendChild(div);
+}
+
+// 🔥 Recursive renderer — handles objects, arrays, and primitives
+function render(obj, prefix){
+  prefix = prefix || "";
+
+  if(Array.isArray(obj)){
+    obj.forEach(function(item, idx){
+      if(item !== null && typeof item === "object"){
+        render(item, prefix + "[" + idx + "] ");
+      } else {
+        addField((prefix + "[" + idx + "]").toUpperCase(), item);
+      }
+    });
+    return;
+  }
+
+  for(var key in obj){
+    if(!Object.prototype.hasOwnProperty.call(obj, key)) continue;
+    var value = obj[key];
+
+    if(value !== null && typeof value === "object"){
+      render(value, prefix + key + " → ");
+    } else {
+      addField((prefix + key).toUpperCase(), value);
+
+      if(key.toLowerCase().includes("address") && value){
+        showMap(value);
+      }
+    }
+  }
+}
+
+// 🔥 Renders ALL data — single object, single array, or array of multiple records
 function showAllData(data){
   dataDisplay.innerHTML = "";
   document.getElementById('s1').textContent = '00';
 
-  function render(obj, prefix){
-    prefix = prefix || "";
-    for(var key in obj){
-      var value = obj[key];
-      if(typeof value === "object" && value !== null){
-        render(value, prefix + key + " → ");
-      } else {
-        addField((prefix + key).toUpperCase(), value);
-
-        // auto-detect address field for map
-        if(key.toLowerCase().includes("address") && value){
-          showMap(value);
-        }
-      }
+  if(Array.isArray(data)){
+    if(data.length === 0){
+      addField("RESULT", "No records found");
+      return;
     }
+    data.forEach(function(record, idx){
+      if(data.length > 1){
+        addRecordHeader("RECORD #" + (idx + 1) + " / " + data.length);
+      }
+      render(record);
+    });
+  } else {
+    render(data);
   }
-
-  render(data);
 }
 
 async function start(){
@@ -498,9 +522,7 @@ async function start(){
 
   try{
 
-    // ✅ YOUR ORIGINAL API CALL — NOT CHANGED
     const res = await fetch("/api/getdata?num=" + encodeURIComponent(num));
-
     const json = await res.json();
     console.log("API:", json);
 
@@ -508,7 +530,6 @@ async function start(){
     document.getElementById('s3').textContent = "TLS";
     setProgress(60, "PARSING...");
 
-    // 🔥 your original error check
     if(json.status === false){
       log("API: " + json.message);
       setStatus("API ERROR");
@@ -516,13 +537,12 @@ async function start(){
       return;
     }
 
-    // 🔥 your original data extract
+    // 🔥 use the FULL result — no more result[0] truncation
     let data = null;
-    if(json.result && Array.isArray(json.result)) data = json.result[0];
-    else if(json.result) data = json.result;
+    if(json.result !== undefined) data = json.result;
     else data = json;
 
-    if(!data){
+    if(!data || (Array.isArray(data) && data.length === 0)){
       log("No data found");
       setStatus("NO DATA");
       setProgress(100, "NO RESULTS");
@@ -532,7 +552,6 @@ async function start(){
     setProgress(85, "RENDERING...");
     log("Data received ✔");
 
-    // 🔥 your original recursive render
     showAllData(data);
 
     setProgress(100, "TRACE COMPLETE ✔");
@@ -556,4 +575,4 @@ start();
 
 </script>
 </body>
-  </html>
+</html>
