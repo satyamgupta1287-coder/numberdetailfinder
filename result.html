@@ -525,6 +525,7 @@ async function start(){
     const res = await fetch("/api/getdata?num=" + encodeURIComponent(num));
     const json = await res.json();
     console.log("API:", json);
+    log("RAW: " + JSON.stringify(json).slice(0, 500));
 
     document.getElementById('s2').textContent = (Date.now() - t0) + "ms";
     document.getElementById('s3').textContent = "TLS";
@@ -534,25 +535,16 @@ async function start(){
       log("API: " + json.message);
       setStatus("API ERROR");
       setProgress(100, "ERROR");
-      return;
-    }
-
-    // 🔥 use the FULL result — no more result[0] truncation
-    let data = null;
-    if(json.result !== undefined) data = json.result;
-    else data = json;
-
-    if(!data || (Array.isArray(data) && data.length === 0)){
-      log("No data found");
-      setStatus("NO DATA");
-      setProgress(100, "NO RESULTS");
+      // even on error, show whatever the API sent
+      showAllData(json);
       return;
     }
 
     setProgress(85, "RENDERING...");
     log("Data received ✔");
 
-    showAllData(data);
+    // 🔥 show the FULL raw API response — every key, nested or not
+    showAllData(json);
 
     setProgress(100, "TRACE COMPLETE ✔");
     log("Completed ✔");
