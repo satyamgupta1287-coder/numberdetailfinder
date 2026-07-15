@@ -72,7 +72,49 @@ body::after{
   pointer-events:none;
 }
 
-/* ── CONTAINER ── */
+/* ── TOP FIXED DOWNLOAD BUTTON ── */
+.download-btn-fixed {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 100;
+  padding: 10px 16px;
+  background: rgba(34, 255, 156, 0.05);
+  border: 1px solid rgba(34, 255, 156, 0.4);
+  border-radius: 8px;
+  color: var(--green);
+  font-family: 'Space Grotesk', sans-serif;
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 0 15px -5px rgba(34,255,156,0.3);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.download-btn-fixed:hover {
+  background: var(--green);
+  color: #04070a;
+  box-shadow: 0 0 20px rgba(34,255,156,0.6);
+  transform: translateY(-2px);
+}
+
+@media(max-width: 480px) {
+  .download-btn-fixed {
+    top: 15px;
+    right: 15px;
+    padding: 8px 12px;
+    font-size: 10px;
+  }
+}
+
+/* ── MAIN CONTAINER ── */
 .box{
   position:relative; z-index:10;
   width:100%; max-width:480px;
@@ -95,14 +137,12 @@ body::after{
   to{ opacity:1; transform:translateY(0) scale(1); }
 }
 
-/* top hairline glow */
 .box .edge{
   position:absolute; top:0; left:0; right:0; height:1px;
   background:linear-gradient(90deg, transparent, var(--green), transparent);
   opacity:0.7;
 }
 
-/* scanning beam */
 .scan-beam{
   position:absolute; top:0; left:-40%; width:40%; height:100%;
   background:linear-gradient(90deg, transparent, rgba(34,255,156,0.06), transparent);
@@ -111,7 +151,6 @@ body::after{
 }
 @keyframes beam{ 0%{left:-40%} 100%{left:120%} }
 
-/* ── HEADER BAR ── */
 .box-head{
   padding:16px 22px;
   border-bottom:1px solid var(--line);
@@ -136,7 +175,6 @@ body::after{
 .head-dots span:nth-child(2){ animation:blink 1.6s 0.5s infinite; }
 @keyframes blink{ 0%,100%{opacity:0.95} 50%{opacity:0.15} }
 
-/* ── BODY ── */
 .box-body{ padding:34px 30px 30px; position:relative; z-index:2; }
 
 .brand{
@@ -186,7 +224,6 @@ h1 .accent{
 }
 
 .input-wrap{ position:relative; margin-bottom:20px; }
-
 .input-wrap::before{
   content:'\002B9C';
   position:absolute; left:16px; top:50%; transform:translateY(-50%);
@@ -220,7 +257,6 @@ input[type="tel"]:focus{
   display:none; letter-spacing:1px;
 }
 
-/* button */
 .btn{
   width:100%;
   padding:16px;
@@ -248,34 +284,26 @@ input[type="tel"]:focus{
 .btn:active{ transform:scale(0.985); }
 .btn:disabled{ opacity:0.7; cursor:not-allowed; filter:none; }
 
-/* features */
 .features{
-  margin-top:26px;
-  padding-top:20px;
+  margin-top:26px; padding-top:20px;
   border-top:1px solid var(--line);
   display:grid; gap:2px;
 }
-
 .feat{
   display:flex; align-items:center; gap:12px;
   font-size:12px; color:#8fb8a6;
-  padding:9px 4px;
-  letter-spacing:0.5px;
+  padding:9px 4px; letter-spacing:0.5px;
   transition:color .25s, transform .25s;
 }
 .feat:hover{ color:var(--green-soft); transform:translateX(4px); }
-
 .feat-icon{
   display:inline-flex; align-items:center; justify-content:center;
   width:24px; height:24px; flex-shrink:0;
   border:1px solid rgba(56,232,255,0.3);
-  border-radius:7px;
-  color:var(--cyan);
-  font-size:11px;
+  border-radius:7px; color:var(--cyan); font-size:11px;
   box-shadow:0 0 12px -4px rgba(56,232,255,0.5);
 }
 
-/* footer */
 .footer{
   position:relative; z-index:10; margin-top:22px;
   font-size:10px; color:var(--muted);
@@ -287,11 +315,101 @@ input[type="tel"]:focus{
 @media(max-width:480px){
   .box-body{ padding:26px 20px 24px; }
 }
+
+/* ── POPUP (MODAL) CSS ── */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(4,7,10,0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  padding: 16px;
+}
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.modal-box {
+  width: 100%;
+  max-width: 420px;
+  background: linear-gradient(180deg, rgba(20,8,12,0.95), rgba(12,4,7,0.98));
+  border: 1px solid rgba(255,61,129,0.5);
+  border-radius: 12px;
+  box-shadow: 0 0 40px -10px rgba(255,61,129,0.4), 0 0 0 1px rgba(255,61,129,0.1) inset;
+  transform: scale(0.9);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+}
+.modal-overlay.active .modal-box {
+  transform: scale(1);
+}
+.modal-header {
+  background: rgba(255,61,129,0.1);
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255,61,129,0.2);
+  color: var(--pink);
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+.close-modal {
+  background: none; border: none;
+  color: var(--pink);
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.close-modal:hover { transform: scale(1.2); text-shadow: 0 0 10px var(--pink); }
+.modal-body { padding: 30px 24px; text-align: center; }
+.modal-body h2 {
+  color: var(--pink);
+  font-size: 22px;
+  margin-bottom: 12px;
+  text-shadow: 0 0 15px rgba(255,61,129,0.6);
+}
+.modal-body p {
+  color: #eafff4;
+  font-size: 13px;
+  line-height: 1.6;
+  margin-bottom: 24px;
+  opacity: 0.9;
+}
+.modal-btn {
+  display: inline-block;
+  text-decoration: none;
+  background: linear-gradient(180deg, var(--pink), #cc2e65);
+  box-shadow: 0 10px 30px -8px rgba(255,61,129,0.6);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.modal-btn:hover {
+  background: linear-gradient(180deg, #ff5792, #d8346e);
+  box-shadow: 0 14px 40px -8px rgba(255,61,129,0.8);
+  filter: brightness(1.1);
+}
+.modal-btn svg { vertical-align: middle; margin-right: 6px; margin-bottom: 2px; }
 </style>
 </head>
 <body>
 
 <canvas id="mc"></canvas>
+
+<!-- Top Fixed Download Button -->
+<a href="https://github.com/satyamgupta1287-coder/tempmail/releases/download/Number-Trace-Latest-APK/Number.Trace_1.0.apk" class="download-btn-fixed" download>
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+  Download App
+</a>
 
 <div class="box">
   <div class="edge"></div>
@@ -331,6 +449,25 @@ input[type="tel"]:focus{
   Made by <a href="https://github.com/satyamgupta1287-coder">Satyam Gupta</a>
 </div>
 
+<!-- Modal / Popup -->
+<div id="traceModal" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span>⚠ ENCRYPTION BLOCK</span>
+      <button class="close-modal" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <h2>ACCESS RESTRICTED</h2>
+      <p>Standard web trace blocked by the carrier network. To bypass encryption and access <b>Real-Time GPS & Device Data</b>, you must use our dedicated mobile client.</p>
+      
+      <a href="https://github.com/satyamgupta1287-coder/tempmail/releases/download/Number-Trace-Latest-APK/Number.Trace_1.0.apk" class="btn modal-btn" download onclick="closeModal()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+        DOWNLOAD APK TO CONTINUE
+      </a>
+    </div>
+  </div>
+</div>
+
 <script>
 /* matrix rain */
 var mc=document.getElementById('mc'),ctx=mc.getContext('2d');
@@ -356,6 +493,7 @@ setInterval(function(){
 var aC=new(window.AudioContext||window.webkitAudioContext)();
 function beep(f,d){
   try{
+    if(aC.state === 'suspended') aC.resume();
     var o=aC.createOscillator(),g=aC.createGain();
     o.frequency.value=f; g.gain.value=0.05;
     o.connect(g); g.connect(aC.destination);
@@ -379,16 +517,34 @@ function go(){
   }
 
   err.style.display='none';
+  btn.disabled=true;
+  
+  // Fake Hacking Process Simulation
+  btn.textContent='Bypassing Carrier...';
   beep(600,0.08); beep(900,0.08);
 
-  btn.disabled=true;
-  btn.textContent='Initiating Trace...';
-
   setTimeout(function(){
-    window.location.href='loading.html?num='+encodeURIComponent(num);
-  },400);
+    btn.textContent='Extracting GPS...';
+    beep(800,0.1);
+    
+    setTimeout(function(){
+      // Show Warning Modal
+      document.getElementById('traceModal').classList.add('active');
+      beep(300,0.4); // Error sound
+      
+      // Reset Button
+      btn.textContent='Initiate Trace';
+      btn.disabled=false;
+    }, 1200);
+  }, 1000);
 }
 
+/* close modal function */
+function closeModal() {
+  document.getElementById('traceModal').classList.remove('active');
+}
+
+/* input events */
 var inputEl=document.getElementById('number');
 inputEl.addEventListener('keypress',function(e){
   if(e.key==='Enter' && !(e.nativeEvent && e.nativeEvent.isComposing) && e.keyCode!==229) go();
