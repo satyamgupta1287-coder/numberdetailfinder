@@ -65,7 +65,6 @@ body{
   -webkit-font-smoothing:antialiased;
 }
 
-/* GRID */
 body::before{
   content:'';
   position:fixed;
@@ -102,7 +101,6 @@ body::before{
   z-index:1;
 }
 
-/* VIGNETTE */
 body::after{
   content:'';
   position:fixed;
@@ -119,7 +117,6 @@ body::after{
   z-index:1;
 }
 
-/* MATRIX */
 #mc{
   position:fixed;
   inset:0;
@@ -133,7 +130,6 @@ body::after{
   pointer-events:none;
 }
 
-/* DOWNLOAD BUTTON */
 .download-btn-fixed{
   position:fixed;
 
@@ -196,7 +192,6 @@ body::after{
   }
 }
 
-/* MAIN BOX */
 .box{
   position:relative;
   z-index:10;
@@ -293,7 +288,6 @@ body::after{
   }
 }
 
-/* HEADER */
 .box-head{
   padding:16px 22px;
 
@@ -356,7 +350,6 @@ body::after{
   }
 }
 
-/* BODY */
 .box-body{
   padding:34px 30px 30px;
 
@@ -364,7 +357,6 @@ body::after{
   z-index:2;
 }
 
-/* BRAND */
 .brand{
   display:flex;
 
@@ -397,7 +389,6 @@ body::after{
   animation:blink 1.4s infinite;
 }
 
-/* TITLE */
 h1{
   font-family:'Space Grotesk',sans-serif;
 
@@ -454,7 +445,6 @@ h1 .accent{
   margin:24px 0;
 }
 
-/* INPUT */
 .input-label{
   font-family:'Space Grotesk',sans-serif;
 
@@ -536,7 +526,6 @@ input[type="tel"]:focus{
     0 0 24px -6px rgba(34,255,156,0.5);
 }
 
-/* ERROR */
 .err-msg{
   font-size:11px;
 
@@ -552,7 +541,6 @@ input[type="tel"]:focus{
   letter-spacing:1px;
 }
 
-/* BUTTON */
 .btn{
   width:100%;
 
@@ -644,7 +632,6 @@ input[type="tel"]:focus{
   filter:none;
 }
 
-/* FEATURES */
 .features{
   margin-top:26px;
 
@@ -706,7 +693,6 @@ input[type="tel"]:focus{
     0 0 12px -4px rgba(56,232,255,0.5);
 }
 
-/* FOOTER */
 .footer{
   position:relative;
 
@@ -738,10 +724,6 @@ input[type="tel"]:focus{
     padding:26px 20px 24px;
   }
 }
-
-/* =========================
-   MODAL
-========================= */
 
 .modal-overlay{
   position:fixed;
@@ -933,7 +915,6 @@ input[type="tel"]:focus{
   margin-bottom:2px;
 }
 
-/* LATER BUTTON */
 .modal-btn-later{
   display:inline-block;
 
@@ -977,7 +958,6 @@ input[type="tel"]:focus{
 
 <canvas id="mc"></canvas>
 
-<!-- DOWNLOAD APP -->
 <a
   href="https://github.com/satyamgupta1287-coder/Apks/releases/download/Apk/Numbertrace.apk"
   class="download-btn-fixed"
@@ -1001,11 +981,9 @@ input[type="tel"]:focus{
   Download App
 </a>
 
-<!-- MAIN BOX -->
 <div class="box">
 
   <div class="edge"></div>
-
   <div class="scan-beam"></div>
 
   <div class="box-head">
@@ -1062,13 +1040,14 @@ input[type="tel"]:focus{
       class="err-msg"
       id="errMsg"
     >
-      Invalid input — minimum 10 digits required
+      Invalid input — please enter a valid 10-digit number
     </div>
 
     <button
       class="btn"
       id="traceBtn"
       onclick="go()"
+      type="button"
     >
       Initiate Trace
     </button>
@@ -1100,7 +1079,6 @@ input[type="tel"]:focus{
   </div>
 </div>
 
-<!-- FOOTER -->
 <div class="footer">
 
   EDUCATIONAL PURPOSE ONLY &nbsp;|&nbsp;
@@ -1112,7 +1090,6 @@ input[type="tel"]:focus{
 
 </div>
 
-<!-- MODAL -->
 <div
   id="traceModal"
   class="modal-overlay"
@@ -1149,7 +1126,6 @@ input[type="tel"]:focus{
         you must use our dedicated mobile client.
       </p>
 
-      <!-- DOWNLOAD -->
       <a
         href="https://github.com/satyamgupta1287-coder/Apks/releases/download/Apk/Numbertrace.apk"
         class="btn modal-btn"
@@ -1178,7 +1154,6 @@ input[type="tel"]:focus{
 
       <br>
 
-      <!-- FIXED LATER BUTTON -->
       <button
         type="button"
         class="modal-btn-later"
@@ -1200,7 +1175,6 @@ input[type="tel"]:focus{
 ========================================= */
 
 var mc = document.getElementById('mc');
-
 var ctx = mc.getContext('2d');
 
 function rsz(){
@@ -1212,10 +1186,7 @@ function rsz(){
 
 rsz();
 
-window.addEventListener(
-  'resize',
-  rsz
-);
+window.addEventListener('resize', rsz);
 
 var ch =
   'アイウエオカキクケコ01001101TRACE';
@@ -1232,10 +1203,7 @@ function iDp(){
 
 iDp();
 
-window.addEventListener(
-  'resize',
-  iDp
-);
+window.addEventListener('resize', iDp);
 
 setInterval(function(){
 
@@ -1308,12 +1276,8 @@ function beep(f,d){
 
   try{
 
-    if(
-      aC.state === 'suspended'
-    ){
-
+    if(aC.state === 'suspended'){
       aC.resume();
-
     }
 
     var o =
@@ -1327,10 +1291,7 @@ function beep(f,d){
     g.gain.value = 0.05;
 
     o.connect(g);
-
-    g.connect(
-      aC.destination
-    );
+    g.connect(aC.destination);
 
     o.start();
 
@@ -1349,48 +1310,72 @@ function beep(f,d){
 
 function go(){
 
-  var num =
-    document
-      .getElementById('number')
-      .value
-      .trim();
+  var input =
+    document.getElementById('number');
 
   var err =
-    document.getElementById(
-      'errMsg'
-    );
+    document.getElementById('errMsg');
 
   var btn =
-    document.getElementById(
-      'traceBtn'
-    );
+    document.getElementById('traceBtn');
 
-  var inp =
-    document.getElementById(
-      'number'
-    );
+  /*
+    IMPORTANT:
+    Remove spaces, +, -, brackets etc.
+    before checking the length.
+  */
+
+  var raw =
+    input.value.trim();
+
+  var digits =
+    raw.replace(/\D/g, '');
+
+  /*
+    Accept:
+      9876543210
+      +919876543210
+      919876543210
+      +91 98765 43210
+
+    Internally use the 10-digit number.
+  */
+
+  var number = digits;
+
+  if(
+    number.length === 12 &&
+    number.startsWith('91')
+  ){
+
+    number =
+      number.substring(2);
+
+  }
 
 
   /* VALIDATION */
 
   if(
-    !num ||
-    num.length < 10
+    number.length !== 10
   ){
+
+    err.textContent =
+      'Invalid input — please enter a valid 10-digit number';
 
     err.style.display =
       'block';
+
+    input.style.borderColor =
+      '#ff3d81';
+
+    input.style.boxShadow =
+      '0 0 0 3px rgba(255,61,129,0.15)';
 
     beep(
       200,
       0.15
     );
-
-    inp.style.borderColor =
-      '#ff3d81';
-
-    inp.style.boxShadow =
-      '0 0 0 3px rgba(255,61,129,0.15)';
 
     return;
 
@@ -1400,10 +1385,17 @@ function go(){
   err.style.display =
     'none';
 
-  btn.disabled = true;
+  input.style.borderColor =
+    '';
+
+  input.style.boxShadow =
+    '';
+
+  btn.disabled =
+    true;
 
 
-  /* SIMULATION */
+  /* EXISTING TRACE FLOW */
 
   btn.textContent =
     'Bypassing Carrier...';
@@ -1433,9 +1425,7 @@ function go(){
     setTimeout(function(){
 
       document
-        .getElementById(
-          'traceModal'
-        )
+        .getElementById('traceModal')
         .classList
         .add('active');
 
@@ -1444,11 +1434,11 @@ function go(){
         0.4
       );
 
-
       btn.textContent =
         'Initiate Trace';
 
-      btn.disabled = false;
+      btn.disabled =
+        false;
 
     },1200);
 
@@ -1464,9 +1454,7 @@ function go(){
 function closeModal(){
 
   document
-    .getElementById(
-      'traceModal'
-    )
+    .getElementById('traceModal')
     .classList
     .remove('active');
 
@@ -1474,31 +1462,51 @@ function closeModal(){
 
 
 /* =========================================
-   LATER BUTTON
+   LATER
    REDIRECT TO LOADING.HTML
 ========================================= */
 
 function continueLater(){
 
-  /* Get entered number */
-
-  var number =
+  var raw =
     document
       .getElementById('number')
       .value
       .trim();
 
+  /*
+    Normalize number only for URL.
+  */
 
-  /* Close popup first */
+  var number =
+    raw.replace(/\D/g, '');
+
+  /*
+    If input is:
+      919876543210
+
+    convert to:
+      9876543210
+  */
+
+  if(
+    number.length === 12 &&
+    number.startsWith('91')
+  ){
+
+    number =
+      number.substring(2);
+
+  }
+
 
   closeModal();
 
 
   /*
-     Redirect with number.
+    Redirect:
 
-     Example:
-     loading.html?num=9876543210
+    loading.html?num=9876543210
   */
 
   if(number){
@@ -1522,9 +1530,7 @@ function continueLater(){
 ========================================= */
 
 var inputEl =
-  document.getElementById(
-    'number'
-  );
+  document.getElementById('number');
 
 
 inputEl.addEventListener(
@@ -1557,9 +1563,7 @@ inputEl.addEventListener(
       '';
 
     document
-      .getElementById(
-        'errMsg'
-      )
+      .getElementById('errMsg')
       .style
       .display = 'none';
 
@@ -1569,4 +1573,4 @@ inputEl.addEventListener(
 </script>
 
 </body>
-  </html>
+</html>
